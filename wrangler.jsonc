@@ -1,0 +1,25 @@
+{
+  "name": "pingflare-api",
+  "account_id": "fbca92db4dd551f67f6e982d4a70a914",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-06-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "triggers": {
+    "crons": ["*/1 * * * *"]
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "vars": {
+    "PUBLIC_ORIGIN": "*"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pingflare",
+      "database_id": "bdcc209d-89b0-4f5f-8e4a-2e461c145b02",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
