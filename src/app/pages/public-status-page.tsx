@@ -19,7 +19,10 @@ export function PublicStatusPage() {
     let active = true
     async function load() {
       try {
-        const result = await apiRequest<PublicStatusPayload>(`/api/public/status/${slug}`)
+        const timezoneOffsetMinutes = new Date().getTimezoneOffset()
+        const result = await apiRequest<PublicStatusPayload>(
+          `/api/public/status/${slug}?tzOffsetMinutes=${timezoneOffsetMinutes}`,
+        )
         if (active) setPayload(result)
       } catch (loadError) {
         if (active) setError(loadError instanceof Error ? loadError.message : String(loadError))

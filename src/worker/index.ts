@@ -261,9 +261,15 @@ app.delete('/api/app/monitors/:id', async (context) => {
 })
 
 app.get('/api/public/status/:slug', async (context) => {
+  const timezoneOffsetMinutes = Number(context.req.query('tzOffsetMinutes') ?? 0)
+  const safeTimezoneOffsetMinutes =
+    Number.isFinite(timezoneOffsetMinutes) && Math.abs(timezoneOffsetMinutes) <= 14 * 60
+      ? Math.trunc(timezoneOffsetMinutes)
+      : 0
   const payload = await getPublicStatusPayload(
     context.env,
     normalizeSlug(context.req.param('slug')),
+    safeTimezoneOffsetMinutes,
   )
   if (!payload) return context.json({ error: 'Public status page not found.' }, 404)
   return context.json(payload)

@@ -1,14 +1,18 @@
 import type { DailyStatusPoint, MonitorRecord } from '../../shared/types'
 
 function dayKey(date: Date) {
-  return date.toISOString().slice(0, 10)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 function formatDayLabel(day: string) {
+  const [year, month, date] = day.split('-').map(Number)
   return new Intl.DateTimeFormat(undefined, {
     month: 'short',
     day: 'numeric',
-  }).format(new Date(`${day}T00:00:00Z`))
+  }).format(new Date(year, month - 1, date))
 }
 
 function toneForDay(point: DailyStatusPoint | undefined) {
@@ -41,8 +45,8 @@ export function DailyStatusTimeline({
   const byDay = new Map(monitor.dailyResults.map((point) => [point.day, point]))
   const today = new Date()
   const dayKeys = Array.from({ length: days }, (_, index) => {
-    const date = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()))
-    date.setUTCDate(date.getUTCDate() - (days - 1 - index))
+    const date = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    date.setDate(date.getDate() - (days - 1 - index))
     return dayKey(date)
   })
 

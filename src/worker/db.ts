@@ -136,11 +136,17 @@ async function getRecentResults(env: Env, monitorId: string, limit = 32): Promis
   }))
 }
 
-async function getDailyResults(env: Env, monitorId: string, days = 90): Promise<DailyStatusPoint[]> {
+async function getDailyResults(
+  env: Env,
+  monitorId: string,
+  days = 90,
+  timezoneOffsetMinutes = 0,
+): Promise<DailyStatusPoint[]> {
   const since = Math.floor(Date.now() / 1000) - days * 24 * 60 * 60
+  const localOffsetSeconds = -timezoneOffsetMinutes * 60
   const rows = await env.DB.prepare(
     `SELECT
-      date(checked_at, 'unixepoch') AS day,
+      date(checked_at + ?, 'unixepoch') AS day,
       COUNT(*) AS total,
       COALESCE(SUM(CASE WHEN up = 1 THEN 1 ELSE 0 END), 0) AS up,
       ROUND(AVG(response_time_ms)) AS avg_response_time_ms
@@ -149,7 +155,7 @@ async function getDailyResults(env: Env, monitorId: string, days = 90): Promise<
      GROUP BY day
      ORDER BY day ASC`,
   )
-    .bind(monitorId, since)
+    .bind(localOffsetSeconds, monitorId, since)
     .all<DailyResultRow>()
 
   return rows.results.map((row) => {
@@ -181,7 +187,11 @@ function mapIncident(row: IncidentRow): Incident {
   }
 }
 
-async function enrichMonitor(env: Env, row: MonitorRow): Promise<MonitorRecord> {
+async function enrichMonitor(
+  env: Env,
+  row: MonitorRow,
+  timezoneOffsetMinutes = 0,
+): Promise<MonitorRecord> {
   return {
     id: row.id,
     project: row.project,
@@ -204,7 +214,7 @@ async function enrichMonitor(env: Env, row: MonitorRow): Promise<MonitorRecord> 
     uptime7d: await getUptimeWindow(env, row.id, 7 * 24 * 60 * 60),
     uptime30d: await getUptimeWindow(env, row.id, 30 * 24 * 60 * 60),
     recentResults: await getRecentResults(env, row.id),
-    dailyResults: await getDailyResults(env, row.id),
+    dailyResults: await getDailyResults(env, row.id, 90, timezoneOffsetMinutes),
   }
 }
 
@@ -507,6 +517,7 @@ export async function getDashboardPayload(env: Env, user: UserProfile): Promise<
 export async function getPublicStatusPayload(
   env: Env,
   slug: string,
+  timezoneOffsetMinutes = 0,
 ): Promise<PublicStatusPayload | null> {
   const row = await env.DB.prepare(
     `SELECT
@@ -525,7 +536,7 @@ export async function getPublicStatusPayload(
 
   if (!row) return null
 
-  const monitor = await enrichMonitor(env, row)
+  const monitor = await enrichMonitor(env, row, timezoneOffsetMinutes)
   const incidents = (await listIncidentRowsForMonitor(env, row.id, 12)).map(mapIncident)
 
   return {
