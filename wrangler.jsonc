@@ -1,5 +1,5 @@
 {
-  "name": "pingflare-api",
+  "name": "pingflare",
   "account_id": "fbca92db4dd551f67f6e982d4a70a914",
   "main": "src/worker/index.ts",
   "compatibility_date": "2026-06-15",
