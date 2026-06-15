@@ -1,6 +1,14 @@
 import * as React from 'react'
 import { Link } from '@tanstack/react-router'
-import { Activity, AlertTriangle, CheckCircle2, Plus, RadioTower, ShieldCheck } from 'lucide-react'
+import {
+  Activity,
+  AlertTriangle,
+  CheckCircle2,
+  Clock3,
+  Plus,
+  RadioTower,
+  ShieldCheck,
+} from 'lucide-react'
 import type { DashboardPayload } from '../../shared/types'
 import { useAuth } from '../auth/auth-context'
 import { IncidentList } from '../components/incident-list'
@@ -39,22 +47,24 @@ export function DashboardPage() {
   if (error) return <div className="error-banner">{error}</div>
   if (!payload) return null
 
+  const monitorCount = payload.overall.total
+  const statusCopy =
+    payload.overall.down === 0
+      ? 'All monitored endpoints are operational.'
+      : `${payload.overall.down} monitor${payload.overall.down === 1 ? '' : 's'} need attention.`
+
   return (
     <>
-      <section className={`hero hero-light ${payload.overall.status}`}>
-        <div className="hero-copy">
-          <div className="eyebrow warm">
-            <Activity size={16} />
-            {payload.user.name}'s workspace
-          </div>
-          <h1>
-            {payload.overall.down === 0
-              ? 'Everything looks healthy.'
-              : 'Some monitors need attention.'}
-          </h1>
+      <section className={`status-overview ${payload.overall.status}`}>
+        <div className="status-overview-main">
+          <span className="status-indicator">
+            <Activity size={18} />
+            {payload.overall.status}
+          </span>
+          <h2>{statusCopy}</h2>
           <p>
-            Manage monitors, per-monitor Telegram alerts, and public status pages for each client
-            from one account.
+            {monitorCount} monitor{monitorCount === 1 ? '' : 's'} grouped by client, with
+            response-time history, Telegram alerts, and public status pages.
           </p>
         </div>
         <Link className="primary-link" to="/app/monitors/new">
@@ -88,6 +98,16 @@ export function DashboardPage() {
 
       <section className="content-layout">
         <div className="projects">
+          <div className="section-toolbar">
+            <div>
+              <p className="eyebrow">Monitor list</p>
+              <h2>Services</h2>
+            </div>
+            <span className="refresh-note">
+              <Clock3 size={15} />
+              Auto-refreshes every 60s
+            </span>
+          </div>
           {payload.projects.length === 0 ? (
             <section className="panel empty-state">
               <h2>No monitors yet</h2>

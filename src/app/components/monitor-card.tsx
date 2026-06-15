@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { ExternalLink } from 'lucide-react'
+import { Bell, BellOff, ExternalLink, Pencil, Share2 } from 'lucide-react'
 import type { MonitorRecord } from '../../shared/types'
 import { formatTime } from '../lib/format'
 import { Metric } from './metric'
@@ -39,13 +39,18 @@ export function MonitorCard({ monitor }: { monitor: MonitorRecord }) {
       <div className="monitor-footer">
         <span>Last checked {formatTime(monitor.lastCheckedAt)}</span>
         <span>Every {monitor.intervalMinutes}m</span>
-        <span>{monitor.telegramConfigured ? 'Telegram ready' : 'Telegram missing'}</span>
+        <span className={monitor.telegramConfigured ? 'inline-ok' : 'inline-muted'}>
+          {monitor.telegramConfigured ? <Bell size={14} /> : <BellOff size={14} />}
+          {monitor.telegramConfigured ? 'Telegram ready' : 'Telegram missing'}
+        </span>
       </div>
       <div className="monitor-link-row">
         <Link to="/app/monitors/$monitorId" params={{ monitorId: monitor.id }}>
+          <Pencil size={15} />
           Edit monitor
         </Link>
         <Link to="/status/$slug" params={{ slug: monitor.publicSlug }}>
+          <Share2 size={15} />
           Public page
         </Link>
       </div>

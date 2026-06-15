@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useParams } from '@tanstack/react-router'
-import { Activity, CheckCircle2, RadioTower } from 'lucide-react'
+import { Activity, CheckCircle2, Clock3, RadioTower } from 'lucide-react'
 import type { PublicStatusPayload } from '../../shared/types'
 import { IncidentList } from '../components/incident-list'
 import { Sparkline } from '../components/sparkline'
@@ -8,6 +8,7 @@ import { StatusPill } from '../components/status-pill'
 import { SummaryCard } from '../components/summary-card'
 import { apiRequest } from '../lib/api'
 import { formatTime } from '../lib/format'
+import { ThemeToggle } from '../theme/theme-context'
 
 export function PublicStatusPage() {
   const { slug } = useParams({ from: '/status/$slug' })
@@ -35,18 +36,31 @@ export function PublicStatusPage() {
   if (!payload) return null
 
   const monitor = payload.monitor
+  const headline =
+    monitor.up === false
+      ? 'Service disruption detected'
+      : monitor.up === true
+        ? 'All systems operational'
+        : 'Awaiting first check'
+
   return (
     <main className="public-page">
+      <div className="public-page-toolbar">
+        <ThemeToggle />
+      </div>
       <section
-        className={`hero hero-light ${monitor.up ? 'operational' : monitor.up === false ? 'down' : 'unknown'}`}
+        className={`public-status-hero ${monitor.up ? 'operational' : monitor.up === false ? 'down' : 'unknown'}`}
       >
-        <div className="hero-copy">
-          <div className="eyebrow warm">
+        <div>
+          <div className="eyebrow">
             <RadioTower size={16} />
             {monitor.project}
           </div>
-          <h1>{monitor.name}</h1>
-          <p>{monitor.url}</p>
+          <h1>{headline}</h1>
+          <p>{monitor.name}</p>
+          <a href={monitor.url} target="_blank" rel="noreferrer">
+            {monitor.url}
+          </a>
         </div>
         <StatusPill monitor={monitor} />
       </section>
@@ -76,12 +90,20 @@ export function PublicStatusPage() {
 
       <section className="content-layout public-layout">
         <section className="panel">
-          <div className="panel-heading">
-            <Activity size={18} />
-            <h2>Response time</h2>
+          <div className="panel-heading stacked">
+            <span className="icon-tile">
+              <Activity size={18} />
+            </span>
+            <div>
+              <h2>Response time</h2>
+              <p>Recent checks for this public monitor.</p>
+            </div>
           </div>
           <Sparkline monitor={monitor} />
-          <p className="muted">Last checked {formatTime(monitor.lastCheckedAt)}</p>
+          <p className="muted row-note">
+            <Clock3 size={15} />
+            Last checked {formatTime(monitor.lastCheckedAt)}
+          </p>
         </section>
         <IncidentList incidents={payload.incidents} />
       </section>

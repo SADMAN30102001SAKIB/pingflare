@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { RadioTower, ShieldCheck } from 'lucide-react'
+import { Activity, CheckCircle2, Loader2, RadioTower, ShieldCheck } from 'lucide-react'
 import type { AuthPayload } from '../../shared/types'
 import { useAuth } from '../auth/auth-context'
 import { apiRequest } from '../lib/api'
+import { ThemeToggle } from '../theme/theme-context'
 
 export function AuthPage({ mode }: { mode: 'login' | 'signup' }) {
   const auth = useAuth()
@@ -40,16 +41,38 @@ export function AuthPage({ mode }: { mode: 'login' | 'signup' }) {
 
   return (
     <main className="auth-page">
+      <div className="floating-theme-control">
+        <ThemeToggle />
+      </div>
       <section className="auth-hero">
-        <div className="eyebrow light">
-          <RadioTower size={16} />
-          PingFlare
+        <div className="brand-lockup auth-brand">
+          <span className="brand-mark">
+            <RadioTower size={20} />
+          </span>
+          <span>
+            <strong>PingFlare</strong>
+            <small>Uptime monitoring</small>
+          </span>
         </div>
-        <h1>Monitor every client API with its own public status page.</h1>
+        <h1>Monitoring that feels calm when everything is fine and loud when it is not.</h1>
         <p>
           Accounts, monitors, Telegram alerts, response-time history, and public-facing uptime
           pages, split cleanly between Cloudflare Pages and Workers.
         </p>
+        <div className="auth-proof-grid">
+          <span>
+            <CheckCircle2 size={16} />
+            Public status pages
+          </span>
+          <span>
+            <Activity size={16} />
+            Response history
+          </span>
+          <span>
+            <ShieldCheck size={16} />
+            Telegram alerts
+          </span>
+        </div>
       </section>
 
       <section className="auth-card">
@@ -77,7 +100,14 @@ export function AuthPage({ mode }: { mode: 'login' | 'signup' }) {
             />
           </label>
           <button className="primary-button" type="submit" disabled={submitting}>
-            {mode === 'login' ? 'Login' : 'Create account'}
+            {submitting ? <Loader2 className="spin" size={16} /> : null}
+            {submitting
+              ? mode === 'login'
+                ? 'Logging in...'
+                : 'Creating...'
+              : mode === 'login'
+                ? 'Login'
+                : 'Create account'}
           </button>
           {error ? <p className="error-line">{error}</p> : null}
         </form>

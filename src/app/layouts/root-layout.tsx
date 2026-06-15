@@ -2,7 +2,7 @@ import { Outlet } from '@tanstack/react-router'
 
 export function RootLayout() {
   return (
-    <div className="app-shell">
+    <div className="root-shell">
       <Outlet />
     </div>
   )

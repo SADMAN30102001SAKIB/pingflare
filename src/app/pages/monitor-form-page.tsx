@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
-import { ArrowRight, RadioTower, ShieldCheck } from 'lucide-react'
+import { ArrowRight, Loader2, RadioTower, ShieldCheck, Trash2 } from 'lucide-react'
 import type { MonitorInput, MonitorRecord } from '../../shared/types'
 import { useAuth } from '../auth/auth-context'
 import { apiRequest } from '../lib/api'
@@ -24,6 +24,8 @@ export function MonitorFormPage({ mode }: { mode: 'create' | 'edit' }) {
   const [telegramChatId, setTelegramChatId] = React.useState('')
   const [publicSlug, setPublicSlug] = React.useState('')
   const [isPublic, setIsPublic] = React.useState(true)
+  const [submitting, setSubmitting] = React.useState(false)
+  const [deleting, setDeleting] = React.useState(false)
 
   React.useEffect(() => {
     if (mode !== 'edit' || !monitorId) return
@@ -62,6 +64,7 @@ export function MonitorFormPage({ mode }: { mode: 'create' | 'edit' }) {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
+    setSubmitting(true)
     const payload: MonitorInput = {
       project,
       name,
@@ -100,6 +103,8 @@ export function MonitorFormPage({ mode }: { mode: 'create' | 'edit' }) {
       void navigate({ to: '/app' })
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : String(submitError))
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -107,8 +112,16 @@ export function MonitorFormPage({ mode }: { mode: 'create' | 'edit' }) {
     if (!monitorId) return
     const confirmed = window.confirm('Delete this monitor?')
     if (!confirmed) return
-    await apiRequest(`/api/app/monitors/${monitorId}`, { method: 'DELETE' }, auth.token)
-    void navigate({ to: '/app' })
+    setDeleting(true)
+    setError(null)
+    try {
+      await apiRequest(`/api/app/monitors/${monitorId}`, { method: 'DELETE' }, auth.token)
+      void navigate({ to: '/app' })
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : String(deleteError))
+    } finally {
+      setDeleting(false)
+    }
   }
 
   if (loading) return <div className="center-panel">Loading monitor...</div>
@@ -117,7 +130,7 @@ export function MonitorFormPage({ mode }: { mode: 'create' | 'edit' }) {
     <section className="editor-layout">
       <div className="editor-header">
         <div>
-          <div className="eyebrow warm">
+          <div className="eyebrow">
             <ShieldCheck size={16} />
             {mode === 'create' ? 'New monitor' : 'Edit monitor'}
           </div>
@@ -135,6 +148,15 @@ export function MonitorFormPage({ mode }: { mode: 'create' | 'edit' }) {
 
       <form className="editor-grid" onSubmit={(event) => void handleSubmit(event)}>
         <section className="panel form-panel">
+          <div className="panel-heading stacked">
+            <span className="icon-tile">
+              <ShieldCheck size={18} />
+            </span>
+            <div>
+              <h2>Monitor target</h2>
+              <p>Endpoint, timing, and public visibility.</p>
+            </div>
+          </div>
           <label>
             Client / Project
             <input value={project} onChange={(event) => setProject(event.target.value)} />
@@ -199,9 +221,14 @@ export function MonitorFormPage({ mode }: { mode: 'create' | 'edit' }) {
         </section>
 
         <section className="panel form-panel">
-          <div className="panel-heading">
-            <RadioTower size={18} />
-            <h2>Telegram alerts</h2>
+          <div className="panel-heading stacked">
+            <span className="icon-tile">
+              <RadioTower size={18} />
+            </span>
+            <div>
+              <h2>Telegram alerts</h2>
+              <p>Optional per-monitor alert destination.</p>
+            </div>
           </div>
           <label className="checkbox-row">
             <input
@@ -239,12 +266,25 @@ export function MonitorFormPage({ mode }: { mode: 'create' | 'edit' }) {
         </section>
 
         <div className="editor-actions">
-          <button className="primary-button" type="submit">
-            {mode === 'create' ? 'Create monitor' : 'Save changes'}
+          <button className="primary-button" type="submit" disabled={submitting || deleting}>
+            {submitting ? <Loader2 className="spin" size={16} /> : null}
+            {submitting
+              ? mode === 'create'
+                ? 'Creating...'
+                : 'Saving...'
+              : mode === 'create'
+                ? 'Create monitor'
+                : 'Save changes'}
           </button>
           {mode === 'edit' ? (
-            <button className="danger-button" type="button" onClick={() => void handleDelete()}>
-              Delete monitor
+            <button
+              className="danger-button"
+              type="button"
+              disabled={submitting || deleting}
+              onClick={() => void handleDelete()}
+            >
+              {deleting ? <Loader2 className="spin" size={16} /> : <Trash2 size={16} />}
+              {deleting ? 'Deleting...' : 'Delete monitor'}
             </button>
           ) : null}
         </div>
