@@ -38,7 +38,7 @@ pnpm exec wrangler d1 create pingflare
 Copy the returned `database_id` into `wrangler.jsonc`, replacing:
 
 ```txt
-00000000-0000-0000-0000-000000000000
+bdcc209d-89b0-4f5f-8e4a-2e461c145b02
 ```
 
 Apply remote migrations:
