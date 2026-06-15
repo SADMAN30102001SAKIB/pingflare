@@ -4,7 +4,6 @@ import {
   markNotified,
   openIncident,
   pruneExpiredSessions,
-  pruneOldResults,
   recordCheck,
   resolveIncident,
   type MonitorRow,
@@ -135,7 +134,6 @@ export async function runChecks(env: Env) {
     return result
   })
 
-  await pruneOldResults(env)
   await pruneExpiredSessions(env)
 
   return {

@@ -14,6 +14,7 @@ import {
   getUserFromToken,
   listUserMonitors,
   updateMonitor,
+  pruneOldResults,
 } from './db'
 import type { Env } from './env'
 import { runChecks } from './checker'
@@ -272,7 +273,12 @@ app.get('/api/health', (context) => context.json({ status: 'ok' }))
 
 export default {
   fetch: app.fetch,
-  async scheduled(_event: ScheduledEvent, env: Env) {
+  async scheduled(event: ScheduledEvent, env: Env) {
+    if (event.cron === '0 0 * * *') {
+      await pruneOldResults(env, 90)
+      return
+    }
+
     await runChecks(env)
   },
 }
