@@ -321,6 +321,17 @@ export async function updateMonitor(
   input: MonitorInput,
 ) {
   const now = Math.floor(Date.now() / 1000)
+  const existing = await env.DB.prepare(
+    `SELECT telegram_bot_token, telegram_chat_id
+     FROM monitors
+     WHERE id = ? AND user_id = ?`,
+  )
+    .bind(monitorId, userId)
+    .first<Pick<MonitorRow, 'telegram_bot_token' | 'telegram_chat_id'>>()
+
+  const telegramBotToken = input.telegramBotToken?.trim() || existing?.telegram_bot_token || null
+  const telegramChatId = input.telegramChatId?.trim() || existing?.telegram_chat_id || null
+
   await env.DB.prepare(
     `UPDATE monitors
      SET project = ?, name = ?, url = ?, expected_status = ?, timeout_ms = ?, interval_minutes = ?, enabled = ?,
@@ -337,8 +348,8 @@ export async function updateMonitor(
       input.intervalMinutes,
       input.enabled ? 1 : 0,
       input.telegramEnabled ? 1 : 0,
-      input.telegramBotToken?.trim() || null,
-      input.telegramChatId?.trim() || null,
+      telegramBotToken,
+      telegramChatId,
       input.publicSlug,
       input.isPublic ? 1 : 0,
       now,

@@ -233,8 +233,8 @@ export function MonitorFormPage({ mode }: { mode: 'create' | 'edit' }) {
             />
           </label>
           <p className="muted">
-            Each monitor owns its own Telegram settings. Leave both fields empty when Telegram is
-            not needed.
+            Each monitor owns its own Telegram settings. On edit, leave credential fields blank to
+            keep the saved values.
           </p>
         </section>
 
