@@ -18,9 +18,18 @@ function toneForDay(point: DailyStatusPoint | undefined) {
   return 'degraded'
 }
 
-function titleForDay(point: DailyStatusPoint | undefined, day: string, intervalMinutes: number) {
+function titleForDay(
+  point: DailyStatusPoint | undefined,
+  day: string,
+  intervalMinutes: number,
+  fallbackTone: 'up' | 'down' | 'unknown',
+) {
   const label = formatDayLabel(day)
-  if (!point || point.total === 0) return `${label}: no checks recorded`
+  if (!point || point.total === 0) {
+    if (fallbackTone === 'up') return `${label}: operational so far today`
+    if (fallbackTone === 'down') return `${label}: down so far today`
+    return `${label}: no checks recorded`
+  }
 
   const estimatedDownMinutes = point.down * intervalMinutes
   const downCopy =
@@ -45,6 +54,12 @@ export function DailyStatusTimeline({
     date.setUTCDate(date.getUTCDate() - (days - 1 - index))
     return dayKey(date)
   })
+  const todayKey = dayKeys[dayKeys.length - 1]
+  const todayFallbackTone: 'up' | 'down' | 'unknown' = monitor.up
+    ? 'up'
+    : monitor.up === false
+      ? 'down'
+      : 'unknown'
 
   const observed = dayKeys.map((key) => byDay.get(key)).filter(Boolean) as DailyStatusPoint[]
   const averageUptime =
@@ -80,11 +95,13 @@ export function DailyStatusTimeline({
       <div className="daily-status-bars" aria-label={`${days}-day status timeline`}>
         {dayKeys.map((key) => {
           const point = byDay.get(key)
+          const fallbackTone = key === todayKey ? todayFallbackTone : 'unknown'
+          const tone = toneForDay(point)
           return (
             <span
               key={key}
-              className={`daily-status-bar ${toneForDay(point)}`}
-              title={titleForDay(point, key, monitor.intervalMinutes)}
+              className={`daily-status-bar ${tone === 'unknown' ? fallbackTone : tone}`}
+              title={titleForDay(point, key, monitor.intervalMinutes, fallbackTone)}
             />
           )
         })}
