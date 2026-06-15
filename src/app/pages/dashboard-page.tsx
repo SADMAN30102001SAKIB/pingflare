@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { Link } from '@tanstack/react-router'
 import { Activity, AlertTriangle, CheckCircle2, Plus, RadioTower, ShieldCheck } from 'lucide-react'
 import type { DashboardPayload } from '../../shared/types'

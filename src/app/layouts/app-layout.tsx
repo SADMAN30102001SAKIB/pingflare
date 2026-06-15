@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { Link, Outlet, useNavigate } from '@tanstack/react-router'
 import { LogOut, RadioTower } from 'lucide-react'
 import { useAuth } from '../auth/auth-context'

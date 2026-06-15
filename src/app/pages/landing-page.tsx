@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { useAuth } from '../auth/auth-context'
 

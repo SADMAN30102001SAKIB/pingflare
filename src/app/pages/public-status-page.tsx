@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { useParams } from '@tanstack/react-router'
 import { Activity, CheckCircle2, RadioTower } from 'lucide-react'
 import type { PublicStatusPayload } from '../../shared/types'

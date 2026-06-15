@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import type { AuthPayload, UserProfile } from '../../shared/types'
 import { apiRequest } from '../lib/api'
 

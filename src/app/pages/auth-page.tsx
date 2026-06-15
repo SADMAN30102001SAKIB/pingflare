@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { RadioTower, ShieldCheck } from 'lucide-react'
 import type { AuthPayload } from '../../shared/types'

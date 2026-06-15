@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { ArrowRight, RadioTower, ShieldCheck } from 'lucide-react'
 import type { MonitorInput, MonitorRecord } from '../../shared/types'
