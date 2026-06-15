@@ -1070,7 +1070,7 @@ h2 {
   font-weight: 700;
 }
 
-:root[data-theme='dark'] .daily-status-bar {
+:root[data-theme='dark'] .daily-status-bar:not(.up):not(.degraded):not(.down) {
   background: #6f819b;
 }
 
