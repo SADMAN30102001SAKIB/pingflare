@@ -1130,6 +1130,177 @@ h2 {
     padding: 14px;
   }
 
+  .app-shell {
+    min-height: 100vh;
+  }
+
+  .app-sidebar {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+  }
+
+  .brand-lockup strong,
+  .sidebar-account strong {
+    font-size: 13px;
+  }
+
+  .brand-lockup small,
+  .sidebar-account small {
+    font-size: 11px;
+  }
+
+  .sidebar-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .sidebar-nav a {
+    min-height: 36px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+
+  .sidebar-account {
+    padding: 9px 10px;
+  }
+
+  .workspace {
+    padding: 14px 10px;
+  }
+
+  .workspace-header {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .workspace-title {
+    font-size: 26px;
+  }
+
+  .workspace-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 8px;
+  }
+
+  .workspace-actions .theme-toggle,
+  .workspace-actions .ghost-button {
+    width: 100%;
+    min-height: 36px;
+  }
+
+  .status-overview {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .status-overview h2 {
+    font-size: 25px;
+  }
+
+  .status-overview p {
+    font-size: 13px;
+  }
+
+  .summary-grid:not(.public-summary-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .summary-grid:not(.public-summary-grid) .summary-card {
+    min-height: 88px;
+    padding: 12px;
+  }
+
+  .summary-grid:not(.public-summary-grid) .summary-card strong {
+    font-size: 26px;
+  }
+
+  .section-toolbar {
+    gap: 8px;
+  }
+
+  .refresh-note {
+    font-size: 11px;
+  }
+
+  .project-heading {
+    gap: 4px;
+  }
+
+  .monitor-card {
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sparkline {
+    height: 64px;
+  }
+
+  .monitor-link-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .monitor-link-row a {
+    justify-content: center;
+  }
+
+  .editor-header {
+    margin-bottom: 12px;
+  }
+
+  .editor-header .workspace-title {
+    font-size: 26px;
+  }
+
+  .editor-grid {
+    gap: 10px;
+  }
+
+  .panel,
+  .auth-card {
+    padding: 14px;
+  }
+
+  .form-panel {
+    gap: 12px;
+  }
+
+  .panel-heading.stacked {
+    gap: 10px;
+  }
+
+  .panel-heading h2 {
+    font-size: 18px;
+  }
+
+  .panel-heading p {
+    font-size: 13px;
+  }
+
+  input,
+  select {
+    min-height: 38px;
+  }
+
+  .editor-actions {
+    display: grid;
+    gap: 8px;
+    padding-top: 12px;
+  }
+
   .workspace-header,
   .editor-header,
   .status-overview,
@@ -1152,14 +1323,13 @@ h2 {
   }
 
   .summary-grid,
-  .metrics-grid,
   .inline-fields,
   .toggle-grid {
     grid-template-columns: 1fr;
   }
 
   .sidebar-nav {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .incident-meta {
