@@ -2,8 +2,8 @@ import * as React from 'react'
 import { useParams } from '@tanstack/react-router'
 import { Activity, CheckCircle2, Clock3, RadioTower } from 'lucide-react'
 import type { PublicStatusPayload } from '../../shared/types'
+import { DailyStatusTimeline } from '../components/daily-status-timeline'
 import { IncidentList } from '../components/incident-list'
-import { Sparkline } from '../components/sparkline'
 import { StatusPill } from '../components/status-pill'
 import { SummaryCard } from '../components/summary-card'
 import { apiRequest } from '../lib/api'
@@ -51,7 +51,7 @@ export function PublicStatusPage() {
       <section
         className={`public-status-hero ${monitor.up ? 'operational' : monitor.up === false ? 'down' : 'unknown'}`}
       >
-        <div>
+        <div className="public-status-copy">
           <div className="eyebrow">
             <RadioTower size={16} />
             {monitor.project}
@@ -65,7 +65,7 @@ export function PublicStatusPage() {
         <StatusPill monitor={monitor} />
       </section>
 
-      <section className="summary-grid">
+      <section className="summary-grid public-summary-grid">
         <SummaryCard
           icon={<CheckCircle2 size={20} />}
           label="24h uptime"
@@ -89,17 +89,11 @@ export function PublicStatusPage() {
       </section>
 
       <section className="content-layout public-layout">
-        <section className="panel">
-          <div className="panel-heading stacked">
-            <span className="icon-tile">
-              <Activity size={18} />
-            </span>
-            <div>
-              <h2>Response time</h2>
-              <p>Recent checks for this public monitor.</p>
-            </div>
+        <section className="panel public-history-panel">
+          <div className="public-section-title">
+            <h2>Services</h2>
           </div>
-          <Sparkline monitor={monitor} />
+          <DailyStatusTimeline monitor={monitor} days={90} />
           <p className="muted row-note">
             <Clock3 size={15} />
             Last checked {formatTime(monitor.lastCheckedAt)}

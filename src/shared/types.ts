@@ -25,6 +25,15 @@ export type Incident = {
   statusCode: number | null
 }
 
+export type DailyStatusPoint = {
+  day: string
+  uptime: number
+  total: number
+  up: number
+  down: number
+  avgResponseTimeMs: number | null
+}
+
 export type UserProfile = {
   id: string
   name: string
@@ -54,6 +63,7 @@ export type MonitorRecord = {
   uptime7d: UptimeWindow
   uptime30d: UptimeWindow
   recentResults: LatencyPoint[]
+  dailyResults: DailyStatusPoint[]
 }
 
 export type DashboardPayload = {
